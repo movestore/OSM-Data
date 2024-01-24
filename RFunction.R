@@ -1,5 +1,8 @@
 library('move2')
 library('lubridate')
+library('sf')
+library('osmdata')
+library('ggmap')
 
 ## The parameter "data" is reserved for the data object passed on from the previous app
 
@@ -8,30 +11,35 @@ library('lubridate')
 # logger.fatal(), logger.error(), logger.warn(), logger.info(), logger.debug(), logger.trace()
 
 # Showcase injecting app setting (parameter `year`)
-rFunction = function(data, sdk, year, ...) {
-  logger.info(paste("Welcome to the", sdk))
-  result <- if (any(lubridate::year(mt_time(data)) == year)) { 
-    data[lubridate::year(mt_time(data)) == year,]
-  } else {
-    NULL
-  }
-  if (!is.null(result)) {
-    # Showcase creating an app artifact. 
-    # This artifact can be downloaded by the workflow user on Moveapps.
-    artifact <- appArtifactPath("plot.png")
-    logger.info(paste("plotting to artifact:", artifact))
-    png(artifact)
-    plot(result)
-    dev.off()
-  } else {
-    logger.warn("nothing to plot")
-  }
-  # Showcase to access a file ('auxiliary files') that is 
-  # a) provided by the app-developer and 
-  # b) can be overridden by the workflow user.
-  fileName <- paste0(getAppFilePath("yourLocalFileSettingId"), "sample.txt")
-  logger.info(readChar(fileName, file.info(fileName)$size))
+rFunction = function(data, key="highway", value="motorway", ...) {
+  
+  bb <- st_bbox(data)
+  
+  set_overpass_url("https://overpass.kumi.systems/api/interpreter")
+  q1 <- opq(bbox=as.numeric(bb)) %>%
+    add_osm_feature(key = key,value = value) %>%
+    osmdata_sf()
 
-  # provide my result to the next app in the MoveApps workflow
-  return(result)
+  g <- ggplot() +
+    geom_path(aes(
+      x = st_coordinates(data)[,1],
+      y = st_coordinates(data)[,2],
+      color = mt_track_id(data)
+    )) +
+    xlab("x") +
+    ylab("y")
+  
+  osmn <- names(q1)[grep("osm_",names(q1))]
+  
+  for (i in rev(seq(along=osmn))) #overlay all available non-empty osm data types (points, lines, ...)
+  {
+    datai <- eval(parse(text=paste0("q1$",osmn[i])))
+    if (!is.null(datai) & length(datai)>0)
+    {  g <- g +   geom_sf(
+      data=datai)}
+  }
+  
+  ggsave(appArtifactPath("track_osmdata.png"),g)
+  
+  return(data)
 }

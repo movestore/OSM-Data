@@ -2,24 +2,18 @@
   "version": "1.1",
   "settings": [
     {
-      "id": "sdk",
-      "name": "The name of the MoveApps SDK",
-      "description": "Showcase requesting a string input from the users of your app.",
-      "defaultValue": "MoveApps SDK",
+      "id": "key",
+      "name": "Key",
+      "description": "Inset the key of the OSM feature that you want to download. See a list of all available ones under https://wiki.openstreetmap.org/wiki/Map_features. Defaults to `highway`.",
+      "defaultValue": "highway",
       "type": "STRING"
     },
     {
-      "id": "year",
-      "name": "The year",
-      "description": "Insert description for the year setting setting",
-      "defaultValue": 2022,
-      "type": "INTEGER"
-    },
-    {
-      "id": "yourLocalFileSettingId",
-      "name": "Personalization",
-      "description": "You can personalize the dashboard by providing a file named 'sample.txt'",
-      "type": "LOCAL_FILE"
+      "id": "value",
+      "name": "Value",
+      "description": "Inset the value of the OSM feature fitting to the key above that you want to download. See a list of all available ones under https://wiki.openstreetmap.org/wiki/Map_features. Defaults to `motorway`. If the feature is not present in the bounding box of your data, the resulting plot will only your your track(s).",
+      "defaultValue": "motorway",
+      "type": "STRING"
     }
   ],
   "dependencies": {
@@ -29,50 +23,45 @@
       },
       {
         "name": "move2"
+      },
+	        {
+        "name": "sf"
+      },
+      {
+        "name": "osmdata"
+      },      
+	  {
+        "name": "ggmap"
       }
     ]
   },
   "createsArtifacts": true,
-  "providedAppFiles": [
-    {
-      "settingId": "yourLocalFileSettingId",
-      "from": "data/local_app_files/provided-app-files/yourLocalFileSettingId/"
-    }
-  ],
   "license": {
     "key": "MIT"
   },
   "language": "eng",
   "keywords": [
-    "example",
-    "template"
+    "open street map",
+    "osmdata",
+	"plot"
   ],
   "people": [
     {
-      "firstName": "Charles",
+      "firstName": "Andrea",
       "middleInitials": null,
-      "lastName": "Darwin",
-      "email": "creator@example.com",
-      "roles": [
-        "author",
-        "creator"
-      ],
-      "orcid": null,
-      "affiliation": null,
-      "affiliationRor": null
-    }
-  ],
-  "funding": [
-    {
-      "name": "funder name",
-      "comment": "grant for App"
+      "lastName": "Kölzsch",
+      "email": "akoelzsch@ab.mpg.de",
+      "roles": ["author", "creator"],
+      "orcid": "0000-0003-0193-1563",
+      "affiliation": "Max-Planck-Institute of Animal Behavior",
+      "affiliationRor": "https://ror.org/026stee22"
     }
   ],
   "references": [
     {
-      "type": "IsDescribedBy",
-      "note": "Darwin, C. 1900. The creation. Journal XY. 1-2",
-      "url": "https://anylink.xyz"
+      "type": "Requires",
+      "note": "Padgham, M. and Lovelace, R. 2023. R package osmdata. ",
+      "url": "https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html#7_References"
     }
   ]
 }
