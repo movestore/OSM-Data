@@ -15,7 +15,7 @@ rFunction = function(data, key="highway", value="motorway", ...) {
   
   bb <- st_bbox(data)
   
-  set_overpass_url("https://overpass.kumi.systems/api/interpreter")
+  set_overpass_url(Sys.getenv("OVERPASS_API", "https://overpass-api.de/api/interpreter"))
   q1 <- opq(bbox=as.numeric(bb)) %>%
     add_osm_feature(key = key,value = value) %>%
     osmdata_sf()
